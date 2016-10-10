@@ -2,6 +2,8 @@ machine:
    php:
      version: 7.0.11
 dependencies:
+  pre:
+    - composer config -g github-oauth.github.com $GITHUB_ACCESS_TOKEN
   override:
     - composer install --dev --no-interaction
 test:
