@@ -44,6 +44,9 @@ use Cake\Routing\Route\DashedRoute;
 Router::defaultRouteClass(DashedRoute::class);
 
 Router::scope('/', function (RouteBuilder $routes) {
+    // マイページ
+    $routes->connect('/my', ['controller' => 'MyPage', 'action' => 'index']);
+
     /**
      * Here, we are connecting '/' (base path) to a controller called 'Pages',
      * its action called 'display', and we pass a param to select the view file
