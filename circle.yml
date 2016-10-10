@@ -1,3 +1,6 @@
+machine:
+   php:
+     version: 7.0.11
 dependencies:
   override:
     - composer install --dev --no-interaction
