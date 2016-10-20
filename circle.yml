@@ -1,7 +1,11 @@
 machine:
    php:
      version: 7.0.11
+   environment:
+     DEBUG: true
 dependencies:
+  cache_directories:
+    - ~/.composer/cache
   pre:
     - composer config -g github-oauth.github.com $GITHUB_ACCESS_TOKEN
   override:
