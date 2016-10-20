@@ -81,4 +81,9 @@ class AccountsTable extends Table
 
         return $rules;
     }
+
+    public function findEnable(Query $query, array $options)
+    {
+        return $query->where(['status' => 'enable']);
+    }
 }
