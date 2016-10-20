@@ -66,6 +66,11 @@ use Cake\Network\Request;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 
+if (file_exists(__DIR__ . DS . '.env')) {
+    $dotEnv = new Dotenv\Dotenv(__DIR__);
+    $dotEnv->load();
+}
+
 /*
  * Read configuration file and inject configuration into various
  * CakePHP classes.
