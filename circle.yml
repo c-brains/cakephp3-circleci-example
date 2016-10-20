@@ -1,8 +1,12 @@
 machine:
-   php:
-     version: 7.0.11
-   environment:
-     DEBUG: true
+  php:
+    version: 7.0.11
+  services:
+    - mysql
+  environment:
+    DEBUG: true
+    DATABASE_URL: "mysql://ubuntu:@localhost/cisample?unix_socket=/var/run/mysqld/mysqld.sock&encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
+    DATABASE_TEST_URL: "mysql://ubuntu:@localhost/cisample_test?unix_socket=/var/run/mysqld/mysqld.sock&encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
 dependencies:
   cache_directories:
     - ~/.composer/cache
@@ -10,6 +14,10 @@ dependencies:
     - composer config -g github-oauth.github.com $GITHUB_ACCESS_TOKEN
   override:
     - composer install --dev --no-interaction
+  post:
+    - mysql -u ubuntu -e "CREATE DATABASE cisample CHARSET utf8mb4;"
+    - mysql -u ubuntu -e "CREATE DATABASE cisample_test CHARSET utf8mb4;"
+    - bin/cake migrations migrate
 test:
   override:
     - mkdir -p $CIRCLE_TEST_REPORTS/phpunit
