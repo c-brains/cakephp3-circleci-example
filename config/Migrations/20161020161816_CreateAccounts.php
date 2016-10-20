@@ -12,7 +12,7 @@ class CreateAccounts extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('accounts');
+        $table = $this->table('accounts', ['collation'=>'utf8mb4_general_ci']);
         $table->addColumn('email', 'string', [
             'default' => null,
             'limit' => 255,
