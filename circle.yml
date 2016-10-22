@@ -2,7 +2,7 @@ machine:
   php:
     version: 7.0.11
   node:
-    version: 4.6.0
+    version: 6.9.0
   services:
     - mysql
   environment:
