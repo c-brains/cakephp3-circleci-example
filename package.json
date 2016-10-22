@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/c-brains/cakephp3-circleci-example/issues"
   },
-  "homepage": "https://github.com/c-brains/cakephp3-circleci-example#readme"
+  "homepage": "https://github.com/c-brains/cakephp3-circleci-example#readme",
+  "dependencies": {
+    "eslint": "^3.8.1"
+  }
 }
