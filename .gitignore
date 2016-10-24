@@ -3,3 +3,4 @@
 /tmp/*
 /logs/*
 /config/.env
+/node_modules/*
