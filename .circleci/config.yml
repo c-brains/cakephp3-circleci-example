@@ -2,22 +2,15 @@ version: 2
 jobs:
   build:
     docker:
-      - image: php:7.0-apache
+      - image: php:7.1-apache
         environment:
-          APP_ENV: local
-          APP_DEBUG: true
-          APP_KEY: kjcndjjksddwdwdw
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: testdb
-          DB_USERNAME: root
-          DB_PASSWORD: password
-          CACHE_DRIVER: memcached
-          QUEUE_DRIVER: sync
+    DEBUG: true
+    DATABASE_URL: "mysql://root:password@localhost/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
+    DATABASE_TEST_URL: "mysql://root:password@localhost/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
       - image: mariadb:5.5
+        command: mysqld  --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
         environment:
-          MYSQL_DATABASE: testdb
+          MYSQL_DATABASE: cisample
           MYSQL_ROOT_PASSWORD: password
     working_directory: /var/www/html
     steps:
@@ -32,10 +25,17 @@ jobs:
             php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('composer-setup.sig'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
             php composer-setup.php && \
             php -r "unlink('composer-setup.php');"
+      - restore_cache:
+        key: cakephp3-circleci-example-{{ .Branch }}
       - run: php composer.phar install
+      - save_cache:
+          key: cakephp3-circleci-example-{{ .Branch }}
+          paths:
+            - "/home/ubuntu/.composer/cache"
+      - run:
+          name: create test repot dir
+          command: mkdir -p $CIRCLE_TEST_REPORTS/phpunit
       - run:
           name: Initialize Database
-          command: |
-            php artisan migrate:refresh
-            php artisan db:seed
-      - run: vendor/bin/phpunit
+          command: bin/cake migrations migrate
+      - run: vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
