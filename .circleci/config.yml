@@ -39,3 +39,18 @@ jobs:
           name: Initialize Database
           command: bin/cake migrations migrate
       - run: vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
+      - run:
+          name: JavaScript Build
+          command: |
+            curl --user ${CIRCLE_API_TOKEN}: \
+              --data build_parameters[CIRCLE_JOB]=build_javascript \
+              --data revision=$CIRCLE_SHA1 \
+              https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+
+  build_javascript:
+    docker:
+      - image: node:6
+      - run: yarn --version
+      - checkout
+      - yarn install
+      - ./node_modules/.bin/eslint --format=junit -o $CIRCLE_TEST_REPORTS/eslint/eslint.xml .
