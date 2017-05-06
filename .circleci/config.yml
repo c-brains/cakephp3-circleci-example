@@ -55,10 +55,10 @@ jobs:
       - run: yarn --version
       - checkout
       - restore_cache:
-          key: cakephp3-circleci-example-{{ .Branch }}
+          key: cakephp3-circleci-example-yarn-cache-{{ .Branch }}
       - run: yarn install
       - save_cache:
-          key: cakephp3-circleci-example-{{ .Branch }}
+          key: cakephp3-circleci-example-yarn-cache-{{ .Branch }}
           paths:
             - "/home/ubuntu/.yarn-cache"
       - run: ./node_modules/.bin/eslint --format=junit -o $CIRCLE_TEST_REPORTS/eslint/eslint.xml .
