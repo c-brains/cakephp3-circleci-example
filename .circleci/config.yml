@@ -1,0 +1,64 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: php:7.1-apache
+        environment:
+          DEBUG: true
+          DATABASE_URL: "mysql://root:password@127.0.0.1/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
+          DATABASE_TEST_URL: "mysql://root:password@127.0.0.1/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
+      - image: circleci/mysql:8.0
+        command: mysqld  --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+        environment:
+          MYSQL_DATABASE: cisample
+          MYSQL_ROOT_PASSWORD: password
+    working_directory: /var/www/html
+    steps:
+      - run:
+          name: JavaScript Build
+          command: |
+            curl --user ${CIRCLE_API_TOKEN}: \
+              --data build_parameters[CIRCLE_JOB]=build_javascript \
+              --data revision=$CIRCLE_SHA1 \
+              https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+      - run: apt-get update && apt-get -y install git unzip zlib1g-dev libicu-dev
+      - checkout
+      - run: docker-php-ext-install pdo pdo_mysql zip intl
+      - run:
+          name: Install Composer
+          command: |
+            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+            php -r "copy('https://composer.github.io/installer.sig', 'composer-setup.sig');" && \
+            php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('composer-setup.sig'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+            php composer-setup.php && \
+            php -r "unlink('composer-setup.php');"
+      - restore_cache:
+          key: cakephp3-circleci-example-{{ .Branch }}
+      - run: php composer.phar install --dev --no-interaction
+      - save_cache:
+          key: cakephp3-circleci-example-{{ .Branch }}
+          paths:
+            - "/home/ubuntu/.composer/cache"
+      - run:
+          name: create test repot dir
+          command: mkdir -p $CIRCLE_TEST_REPORTS/phpunit
+      - run:
+          name: Initialize Database
+          command: bin/cake migrations migrate
+      - run: vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
+
+  build_javascript:
+    docker:
+      - image: node:6
+    working_directory: /var/www/html
+    steps:
+      - run: yarn --version
+      - checkout
+      - restore_cache:
+          key: cakephp3-circleci-example-yarn-cache-{{ .Branch }}
+      - run: yarn install
+      - save_cache:
+          key: cakephp3-circleci-example-yarn-cache-{{ .Branch }}
+          paths:
+            - "/home/ubuntu/.yarn-cache"
+      - run: ./node_modules/.bin/eslint --format=junit -o $CIRCLE_TEST_REPORTS/eslint/eslint.xml .
