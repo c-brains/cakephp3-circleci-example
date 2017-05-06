@@ -50,7 +50,8 @@ jobs:
   build_javascript:
     docker:
       - image: node:6
+    steps:
       - run: yarn --version
       - checkout
-      - yarn install
-      - ./node_modules/.bin/eslint --format=junit -o $CIRCLE_TEST_REPORTS/eslint/eslint.xml .
+      - run: yarn install
+      - run: ./node_modules/.bin/eslint --format=junit -o $CIRCLE_TEST_REPORTS/eslint/eslint.xml .
