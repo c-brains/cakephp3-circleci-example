@@ -5,8 +5,8 @@ jobs:
       - image: php:7.1-apache
         environment:
           DEBUG: true
-          DATABASE_URL: "mysql://root:password@localhost/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
-          DATABASE_TEST_URL: "mysql://root:password@localhost/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
+          DATABASE_URL: "mysql://root:password@127.0.0.1/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
+          DATABASE_TEST_URL: "mysql://root:password@127.0.0.1/cisample?encoding=utf8mb4&timezone=UTC&cacheMetadata=true"
       - image: mariadb:5.5
         command: mysqld  --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
         environment:
