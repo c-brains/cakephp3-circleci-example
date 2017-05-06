@@ -16,7 +16,7 @@ jobs:
     steps:
       - run: apt-get update && apt-get -y install git unzip zlib1g-dev
       - checkout
-      - run: docker-php-ext-install pdo pdo_mysql zip
+      - run: docker-php-ext-install pdo pdo_mysql zip intl
       - run:
           name: Install Composer
           command: |
