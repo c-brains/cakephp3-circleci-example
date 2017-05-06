@@ -50,6 +50,7 @@ jobs:
   build_javascript:
     docker:
       - image: node:6
+    working_directory: /var/www/html
     steps:
       - run: yarn --version
       - checkout
