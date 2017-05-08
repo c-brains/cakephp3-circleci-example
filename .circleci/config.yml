@@ -2,6 +2,26 @@ version: 2
 jobs:
   build:
     docker:
+      - image: php:7.1
+    working_directory: /var/www/html
+    steps:
+      - run:
+          name: JavaScript Build
+          command: |
+            curl --user ${CIRCLE_API_TOKEN}: \
+              --data build_parameters[CIRCLE_JOB]=build_javascript \
+              --data revision=$CIRCLE_SHA1 \
+              https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+      - run:
+          name: PHP Build
+          command: |
+            curl --user ${CIRCLE_API_TOKEN}: \
+              --data build_parameters[CIRCLE_JOB]=build_php \
+              --data revision=$CIRCLE_SHA1 \
+              https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+
+  build_php:
+    docker:
       - image: php:7.1-apache
         environment:
           DEBUG: true
@@ -14,13 +34,6 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
     working_directory: /var/www/html
     steps:
-      - run:
-          name: JavaScript Build
-          command: |
-            curl --user ${CIRCLE_API_TOKEN}: \
-              --data build_parameters[CIRCLE_JOB]=build_javascript \
-              --data revision=$CIRCLE_SHA1 \
-              https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
       - run: apt-get update && apt-get -y install git unzip zlib1g-dev libicu-dev
       - checkout
       - run: docker-php-ext-install pdo pdo_mysql zip intl
@@ -46,7 +59,6 @@ jobs:
           name: Initialize Database
           command: bin/cake migrations migrate
       - run: vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
-
   build_javascript:
     docker:
       - image: node:6
