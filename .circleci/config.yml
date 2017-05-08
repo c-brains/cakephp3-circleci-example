@@ -1,8 +1,9 @@
 version: 2
 jobs:
   build:
-    machine: true
-    working_directory: ~
+    docker:
+      - image: php:7.1
+    working_directory: /var/www/html
     steps:
       - run:
           name: JavaScript Build
