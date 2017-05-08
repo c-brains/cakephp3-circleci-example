@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     machine: true
-    working_directory: /var/www/html
+    working_directory: ~
     steps:
       - run:
           name: JavaScript Build
