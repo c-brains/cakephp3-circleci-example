@@ -27,7 +27,7 @@ jobs:
           command: mkdir -p $CIRCLE_TEST_REPORTS/phpunit
       - run:
           name: Wait for MySQL DB
-          command: nc -z 127.0.0.1 3306
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
           name: Initialize Database
           command: bin/cake migrations migrate
