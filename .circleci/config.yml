@@ -26,6 +26,9 @@ jobs:
           name: create test repot dir
           command: mkdir -p $CIRCLE_TEST_REPORTS/phpunit
       - run:
+          name: Wait for MySQL DB
+          command: nc -z 127.0.0.1 3306
+      - run:
           name: Initialize Database
           command: bin/cake migrations migrate
       - run: vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
