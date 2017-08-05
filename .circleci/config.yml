@@ -36,9 +36,6 @@ jobs:
           name: create test repot dir
           command: mkdir -p $CIRCLE_TEST_REPORTS/phpunit
       - run:
-          name: Wait for MySQL DB
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-      - run:
           name: Initialize Database
           command: bin/cake migrations migrate
       - run: vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml
