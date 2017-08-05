@@ -16,6 +16,7 @@ jobs:
     steps:
       - run: apt-get update && apt-get -y install git unzip zlib1g-dev libicu-dev
       - run: docker-php-ext-install pdo pdo_mysql zip intl
+      - checkout
       - run:
           name: Install Composer
           command: |
@@ -26,7 +27,6 @@ jobs:
             php -r "unlink('composer-setup.php');"
       - restore_cache:
           key: cakephp3-circleci-example-{{ .Branch }}
-      - checkout
       - run: composer install --dev --no-interaction
       - save_cache:
           key: cakephp3-circleci-example-{{ .Branch }}
