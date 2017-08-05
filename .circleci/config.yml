@@ -27,7 +27,7 @@ jobs:
             php -r "unlink('composer-setup.php');"
       - restore_cache:
           key: cakephp3-circleci-example-{{ .Branch }}
-      - run: composer install --dev --no-interaction
+      - run: php composer.phar install --dev --no-interaction
       - save_cache:
           key: cakephp3-circleci-example-{{ .Branch }}
           paths:
