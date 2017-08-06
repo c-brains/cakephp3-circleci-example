@@ -55,5 +55,7 @@ workflows:
   version: 2
   build-all:
     jobs:
-      - php_test
       - php_code_sniffer
+      - php_test:
+          requires:
+            - php_code_sniffer
