@@ -82,6 +82,13 @@ class AccountsTable extends Table
         return $rules;
     }
 
+    /**
+     * find enable account (custom finder)
+     *
+     * @param \Cake\ORM\Query $query The query to find with
+     * @param array $options The options to use for the find
+     * @return $this
+     */
     public function findEnable(Query $query, array $options)
     {
         return $query->where(['status' => 'enable']);
